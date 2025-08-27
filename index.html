@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway - DANA, GOPAY, OVO, QRIS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .payment-content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .payment-methods {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+            background: #f9f9f9;
+        }
+
+        .payment-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: #2575fc;
+            text-align: center;
+        }
+
+        .method {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .method:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .method.active {
+            border: 2px solid #2575fc;
+            background: #eef5ff;
+        }
+
+        .method-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            margin-right: 15px;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .dana .method-icon {
+            background: #00a3e0;
+        }
+
+        .gopay .method-icon {
+            background: #00aae7;
+        }
+
+        .ovo .method-icon {
+            background: #4c2a86;
+        }
+
+        .qris .method-icon {
+            background: #23b197;
+        }
+
+        .method-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .method-info p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .payment-details {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+            background: white;
+        }
+
+        .detail-content {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .detail-header {
+            margin-bottom: 30px;
+        }
+
+        .detail-header i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .dana-details .detail-header i {
+            color: #00a3e0;
+        }
+
+        .gopay-details .detail-header i {
+            color: #00aae7;
+        }
+
+        .ovo-details .detail-header i {
+            color: #4c2a86;
+        }
+
+        .qris-details .detail-header i {
+            color: #23b197;
+        }
+
+        .detail-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .detail-header p {
+            color: #666;
+        }
+
+        .payment-info {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .payment-info p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .payment-number {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2575fc;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #1c64e0;
+            transform: translateY(-2px);
+        }
+
+        .qris-image {
+            width: 100%;
+            max-width: 250px;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .qris-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .instruction {
+            text-align: left;
+            margin-top: 25px;
+            padding: 15px;
+            background: #f0f7ff;
+            border-radius: 12px;
+        }
+
+        .instruction h3 {
+            margin-bottom: 10px;
+            color: #2575fc;
+        }
+
+        .instruction ol {
+            padding-left: 20px;
+        }
+
+        .instruction li {
+            margin-bottom: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .payment-content {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .payment-number {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Payment Gateway</h1>
+            <p>Pilih metode pembayaran yang Anda inginkan</p>
+        </header>
+        
+        <div class="payment-content">
+            <div class="payment-methods">
+                <h2 class="payment-title">Metode Pembayaran</h2>
+                
+                <div class="method dana active" data-method="dana">
+                    <div class="method-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="method-info">
+                        <h3>DANA</h3>
+                        <p>Transfer melalui aplikasi DANA</p>
+                    </div>
+                </div>
+                
+                <div class="method gopay" data-method="gopay">
+                    <div class="method-icon">
+                        <i class="fab fa-google-wallet"></i>
+                    </div>
+                    <div class="method-info">
+                        <h3>GOPAY</h3>
+                        <p>Transfer melalui aplikasi Gojek</p>
+                    </div>
+                </div>
+                
+                <div class="method ovo" data-method="ovo">
+                    <div class="method-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="method-info">
+                        <h3>OVO</h3>
+                        <p>Transfer melalui aplikasi OVO</p>
+                    </div>
+                </div>
+                
+                <div class="method qris" data-method="qris">
+                    <div class="method-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <div class="method-info">
+                        <h3>QRIS</h3>
+                        <p>Scan kode QR untuk pembayaran</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-details">
+                <div class="detail-content dana-details">
+                    <div class="detail-header">
+                        <i class="fas fa-wallet"></i>
+                        <h2>Pembayaran via DANA</h2>
+                        <p>Gunakan nomor berikut untuk transfer</p>
+                    </div>
+                    
+                    <div class="payment-info">
+                        <p>Nomor DANA</p>
+                        <div class="payment-number">083850320391</div>
+                        <button class="copy-btn" data-number="089662621267">Salin Nomor</button>
+                    </div>
+                    
+                    <div class="instruction">
+                        <h3>Cara Pembayaran:</h3>
+                        <ol>
+                            <li>Buka aplikasi DANA di ponsel Anda</li>
+                            <li>Pilih menu "Kirim"</li>
+                            <li>Masukkan nomor di atas</li>
+                            <li>Masukkan jumlah transfer</li>
+                            <li>Konfirmasi dan selesaikan pembayaran</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2023 Payment Gateway. Semua hak dilindungi.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const methods = document.querySelectorAll('.method');
+            const paymentDetails = document.querySelector('.payment-details');
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            
+            // Data untuk setiap metode pembayaran
+            const paymentData = {
+                dana: {
+                    icon: 'fas fa-wallet',
+                    title: 'Pembayaran via DANA',
+                    description: 'Gunakan nomor berikut untuk transfer',
+                    number: '089662621267',
+                    instructions: [
+                        'Buka aplikasi DANA di ponsel Anda',
+                        'Pilih menu "Kirim"',
+                        'Masukkan nomor di atas',
+                        'Masukkan jumlah transfer',
+                        'Konfirmasi dan selesaikan pembayaran'
+                    ]
+                },
+                gopay: {
+                    icon: 'fab fa-google-wallet',
+                    title: 'Pembayaran via GOPAY',
+                    description: 'Gunakan nomor berikut untuk transfer',
+                    number: '089662621267',
+                    instructions: [
+                        'Buka aplikasi Gojek di ponsel Anda',
+                        'Pilih menu "Bayar"',
+                        'Pilih "Kirim" kemudian "Ke Teman"',
+                        'Masukkan nomor di atas',
+                        'Masukkan jumlah transfer dan selesaikan pembayaran'
+                    ]
+                },
+                ovo: {
+                    icon: 'fas fa-money-bill-wave',
+                    title: 'Pembayaran via OVO',
+                    description: 'Gunakan nomor berikut untuk transfer',
+                    number: '089662621267',
+                    instructions: [
+                        'Buka aplikasi OVO di ponsel Anda',
+                        'Pilih menu "Transfer"',
+                        'Pilih "OVO" sebagai metode transfer',
+                        'Masukkan nomor di atas',
+                        'Masukkan jumlah transfer dan selesaikan pembayaran'
+                    ]
+                },
+                qris: {
+                    icon: 'fas fa-qrcode',
+                    title: 'Pembayaran via QRIS',
+                    description: 'Scan kode QR berikut untuk pembayaran',
+                    number: '',
+                    instructions: [
+                        'Buka aplikasi e-wallet atau mobile banking yang mendukung QRIS',
+                        'Pilih menu "Scan" atau "QRIS"',
+                        'Scan kode QR yang tertera di samping',
+                        'Masukkan jumlah pembayaran',
+                        'Konfirmasi dan selesaikan pembayaran'
+                    ],
+                    qrImage: 'https://img1.pixhost.to/images/8262/635342187_imgtmp.jpg'
+                }
+            };
+            
+            // Fungsi untuk mengubah tampilan detail pembayaran
+            function changePaymentMethod(method) {
+                const data = paymentData[method];
+                
+                // Update konten detail pembayaran
+                const detailContent = document.createElement('div');
+                detailContent.className = `detail-content ${method}-details`;
+                detailContent.innerHTML = `
+                    <div class="detail-header">
+                        <i class="${data.icon}"></i>
+                        <h2>${data.title}</h2>
+                        <p>${data.description}</p>
+                    </div>
+                    
+                    <div class="payment-info">
+                        ${method !== 'qris' ? 
+                            `<p>Nomor ${method.toUpperCase()}</p>
+                            <div class="payment-number">${data.number}</div>
+                            <button class="copy-btn" data-number="${data.number}">Salin Nomor</button>` :
+                            `<div class="qris-image">
+                                <img src="${data.qrImage}" alt="QR Code Pembayaran">
+                            </div>`
+                        }
+                    </div>
+                    
+                    <div class="instruction">
+                        <h3>Cara Pembayaran:</h3>
+                        <ol>
+                            ${data.instructions.map(step => `<li>${step}</li>`).join('')}
+                        </ol>
+                    </div>
+                `;
+                
+                // Animasi fade out dan in
+                paymentDetails.style.opacity = '0';
+                setTimeout(() => {
+                    paymentDetails.innerHTML = '';
+                    paymentDetails.appendChild(detailContent);
+                    paymentDetails.style.opacity = '1';
+                    
+                    // Tambahkan event listener untuk tombol salin yang baru
+                    const newCopyBtn = detailContent.querySelector('.copy-btn');
+                    if (newCopyBtn) {
+                        newCopyBtn.addEventListener('click', copyToClipboard);
+                    }
+                }, 300);
+            }
+            
+            // Fungsi untuk menyalin teks ke clipboard
+            function copyToClipboard(e) {
+                const number = e.target.getAttribute('data-number');
+                navigator.clipboard.writeText(number).then(() => {
+                    const originalText = e.target.textContent;
+                    e.target.textContent = 'Tersalin!';
+                    
+                    setTimeout(() => {
+                        e.target.textContent = originalText;
+                    }, 2000);
+                });
+            }
+            
+            // Event listener untuk setiap metode pembayaran
+            methods.forEach(method => {
+                method.addEventListener('click', function() {
+                    const methodType = this.getAttribute('data-method');
+                    
+                    // Hapus kelas active dari semua method
+                    methods.forEach(m => m.classList.remove('active'));
+                    
+                    // Tambahkan kelas active ke method yang diklik
+                    this.classList.add('active');
+                    
+                    // Ubah tampilan detail pembayaran
+                    changePaymentMethod(methodType);
+                });
+            });
+            
+            // Event listener untuk tombol salin
+            copyButtons.forEach(btn => {
+                btn.addEventListener('click', copyToClipboard);
+            });
+        });
+    </script>
+</body>
+</html>
